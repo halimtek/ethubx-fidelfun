@@ -1,6 +1,25 @@
 import Link from "next/link";
 import { ArrowLeft, Sparkles } from "lucide-react";
+import { Suspense } from "react";
 import TraceClient from "@/components/TraceClient";
+
+function TraceLoading() {
+  return (
+    <div className="mx-auto w-full max-w-3xl">
+      <div className="flex min-h-[500px] items-center justify-center">
+        <div className="text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-100">
+            <Sparkles className="text-purple-600" size={28} />
+          </div>
+
+          <p className="font-bold text-gray-600">
+            Getting your practice ready...
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function TracePage() {
   return (
@@ -14,6 +33,7 @@ export default function TracePage() {
               inline-flex items-center gap-2
               rounded-xl px-3 py-2
               text-sm font-bold text-gray-600
+              transition
               hover:bg-purple-50 hover:text-purple-700
             "
           >
@@ -30,7 +50,9 @@ export default function TracePage() {
 
       {/* Content */}
       <div className="px-4 py-6 sm:px-6 sm:py-10">
-        <TraceClient />
+        <Suspense fallback={<TraceLoading />}>
+          <TraceClient />
+        </Suspense>
       </div>
     </main>
   );
