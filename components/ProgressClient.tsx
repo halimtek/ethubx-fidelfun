@@ -1,44 +1,147 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BookOpen, Flame, RotateCcw, Trophy } from "lucide-react";
-import { fidelFamilies } from "@/data/fidel";
+import { Trophy, Target, BookOpen, RotateCcw } from "lucide-react";
 
 export default function ProgressClient() {
-  const [practice,setPractice] = useState(0);
-  const [quiz,setQuiz] = useState(0);
+  const [quizScore, setQuizScore] = useState<number | null>(null);
+  const [loaded, setLoaded] = useState(false);
 
-  useEffect(()=>{
-    setPractice(Number(localStorage.getItem("ethubx-practice-score")||0));
-    setQuiz(Number(localStorage.getItem("ethubx-quiz-score")||0));
-  },[]);
+  useEffect(() => {
+    // localStorage only runs in the browser
+    const savedScore = localStorage.getItem("ethubx-quiz-score");
 
-  const learned = Math.min(fidelFamilies.length, Number(localStorage.getItem("ethubx-learned")||0));
-  const overall = Math.min(100, Math.round(((learned/fidelFamilies.length)*60) + Math.min(practice/20,1)*20 + Math.min(quiz/10,1)*20));
+    if (savedScore !== null) {
+      const parsedScore = Number(savedScore);
+
+      if (!Number.isNaN(parsedScore)) {
+        setQuizScore(parsedScore);
+      }
+    }
+
+    setLoaded(true);
+  }, []);
+
+  function resetProgress() {
+    localStorage.removeItem("ethubx-quiz-score");
+    setQuizScore(null);
+  }
+
+  if (!loaded) {
+    return (
+      <div className="mt-10">
+        <div className="animate-pulse rounded-[2rem] border border-stone-200 bg-white p-8">
+          <div className="h-6 w-32 rounded-full bg-stone-200" />
+          <div className="mt-4 h-12 w-48 rounded-2xl bg-stone-200" />
+          <div className="mt-4 h-5 w-64 rounded-full bg-stone-100" />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="mt-8 grid gap-5 lg:grid-cols-[1.2fr_.8fr]">
-      <div className="card p-6 sm:p-8">
-        <div className="flex items-center justify-between">
-          <div><p className="text-sm font-bold text-stone-500">Overall progress</p><h2 className="mt-1 text-4xl font-black">{overall}%</h2></div>
-          <div className="grid h-14 w-14 place-items-center rounded-2xl bg-[#5b3df5]/10 text-[#5b3df5]"><Trophy/></div>
-        </div>
-        <div className="mt-6 h-4 overflow-hidden rounded-full bg-stone-100"><div className="h-full rounded-full bg-[#5b3df5] transition-all" style={{width:`${overall}%`}}/></div>
-        <div className="mt-8 grid gap-3 sm:grid-cols-3">
-          <Stat icon={<BookOpen/>} label="Fidel families" value={`${learned}/${fidelFamilies.length}`}/>
-          <Stat icon={<Flame/>} label="Practice correct" value={practice}/>
-          <Stat icon={<Trophy/>} label="Best quiz" value={`${quiz}/10`}/>
+    <div className="mt-10 space-y-6">
+      {/* Main progress */}
+      <div className="relative overflow-hidden rounded-[2rem] border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-[#f4b942]/15" />
+        <div className="absolute -bottom-16 -left-10 h-32 w-32 rounded-full bg-[#5b3df5]/10" />
+
+        <div className="relative">
+          <div className="flex items-center gap-3">
+            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#f4b942]/20">
+              <Trophy className="h-6 w-6 text-[#b77900]" />
+            </div>
+
+            <div>
+              <p className="text-sm font-bold uppercase tracking-wider text-stone-400">
+                Quiz progress
+              </p>
+              <h2 className="text-2xl font-black text-stone-900">
+                Your best score
+              </h2>
+            </div>
+          </div>
+
+          <div className="mt-8">
+            {quizScore !== null ? (
+              <>
+                <div className="flex items-end gap-3">
+                  <span className="text-6xl font-black tracking-tight text-stone-900">
+                    {quizScore}
+                  </span>
+                  <span className="mb-2 text-lg font-bold text-stone-400">
+                    points
+                  </span>
+                </div>
+
+                <p className="mt-3 text-stone-500">
+                  Keep practicing and try to beat your score!
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="text-4xl font-black text-stone-900">
+                  Ready to learn?
+                </div>
+
+                <p className="mt-3 text-stone-500">
+                  Complete a quiz and your score will appear here.
+                </p>
+              </>
+            )}
+          </div>
         </div>
       </div>
-      <div className="card p-6">
-        <h3 className="text-xl font-black">Keep going</h3>
-        <p className="mt-2 leading-7 text-stone-600">A few minutes every day is better than one long session. Practice words, then challenge yourself with the quiz.</p>
-        <button onClick={()=>{localStorage.clear();location.reload()}} className="btn-secondary mt-6 w-full"><RotateCcw/> Reset progress</button>
+
+      {/* Learning stats */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="rounded-[1.75rem] border border-stone-200 bg-[#fffaf0] p-6">
+          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#f4b942]/20">
+            <BookOpen className="h-6 w-6 text-[#b77900]" />
+          </div>
+
+          <p className="mt-5 text-sm font-bold uppercase tracking-wider text-stone-400">
+            Fidel families
+          </p>
+
+          <p className="mt-1 text-3xl font-black text-stone-900">33</p>
+
+          <p className="mt-2 text-sm text-stone-500">
+            Families available to explore
+          </p>
+        </div>
+
+        <div className="rounded-[1.75rem] border border-stone-200 bg-[#f7f5ff] p-6">
+          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#5b3df5]/10">
+            <Target className="h-6 w-6 text-[#5b3df5]" />
+          </div>
+
+          <p className="mt-5 text-sm font-bold uppercase tracking-wider text-stone-400">
+            Practice goal
+          </p>
+
+          <p className="mt-1 text-3xl font-black text-stone-900">
+            Keep going!
+          </p>
+
+          <p className="mt-2 text-sm text-stone-500">
+            Learn a little Fidel every day.
+          </p>
+        </div>
       </div>
+
+      {/* Reset */}
+      {quizScore !== null && (
+        <div className="flex justify-center pt-2">
+          <button
+            onClick={resetProgress}
+            className="inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-bold text-stone-500 transition hover:bg-stone-100 hover:text-stone-800"
+          >
+            <RotateCcw className="h-4 w-4" />
+            Reset progress
+          </button>
+        </div>
+      )}
     </div>
   );
-}
-
-function Stat({icon,label,value}:{icon:React.ReactNode,label:string,value:string|number}) {
-  return <div className="rounded-2xl bg-stone-50 p-4"><div className="text-[#5b3df5]">{icon}</div><p className="mt-3 text-xs font-bold text-stone-500">{label}</p><p className="mt-1 text-xl font-black">{value}</p></div>;
 }
