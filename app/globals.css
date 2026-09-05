@@ -35,7 +35,7 @@ body {
    ========================================================= */
 
 html.dark body {
-  background: #0c0a09;
+   background: #0c0a09;
   color: #f5f5f4;
 }
 
@@ -322,4 +322,155 @@ html.dark .eyebrow {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
+}
+/* =========================================================
+   EXTRA DARK MODE — HOME / LEARN / TRACE
+   ========================================================= */
+
+/* Home */
+html.dark .bg-\[\#fffdf9\] {
+  background-color: #0c0a09 !important;
+}
+
+/* Learn */
+html.dark .bg-\[\#faf8ff\] {
+  background-color: #17141f !important;
+}
+
+/* Gray backgrounds */
+html.dark .bg-gray-50 {
+  background-color: #1c1917 !important;
+}
+
+html.dark .bg-gray-100 {
+  background-color: #292524 !important;
+}
+
+html.dark .bg-gray-200 {
+  background-color: #44403c !important;
+}
+
+/* Gray text */
+html.dark .text-gray-900 {
+  color: #fafaf9 !important;
+}
+
+html.dark .text-gray-800 {
+  color: #e7e5e4 !important;
+}
+
+html.dark .text-gray-700 {
+  color: #d6d3d1 !important;
+}
+
+html.dark .text-gray-600 {
+  color: #a8a29e !important;
+}
+
+html.dark .text-gray-500 {
+  color: #a8a29e !important;
+}
+
+html.dark .text-gray-400 {
+  color: #78716c !important;
+}
+
+/* Gray borders */
+html.dark .border-gray-100 {
+  border-color: #292524 !important;
+}
+
+html.dark .border-gray-200 {
+  border-color: #44403c !important;
+}
+
+html.dark .border-gray-300 {
+  border-color: #57534e !important;
+}
+
+/* Trace canvas */
+html.dark .bg-white {
+  background-color: #0c0a09 !important;
+}
+
+/* Trace purple guide */
+html.dark .bg-purple-100 {
+  background-color: #3b176f !important;
+}
+
+html.dark .text-purple-700 {
+  color: #c4b5fd !important;
+}
+
+/* Trace progress */
+html.dark .bg-red-50 {
+  background-color: #3f1515 !important;
+}
+
+html.dark .border-red-100 {
+  border-color: #7f1d1d !important;
+}
+
+html.dark .text-red-600 {
+  color: #f87171 !important;
+}
+
+/* Light white surfaces inside dark pages */
+html.dark .bg-white\/70 {
+  background-color: rgba(28, 25, 23, 0.85) !important;
+}
+
+html.dark .bg-white\/90 {
+  background-color: rgba(28, 25, 23, 0.9) !important;
+}
+
+/* Shadows become much more subtle */
+html.dark .shadow-xl,
+html.dark .shadow-lg,
+html.dark .shadow-md,
+html.dark .shadow-sm {
+  --tw-shadow-color: rgba(0, 0, 0, 0.35);
+}
+/* Home decorative elements */
+html.dark .bg-purple-200\/40 {
+  background-color: rgba(124, 58, 237, 0.12) !important;
+}
+
+html.dark .bg-yellow-200\/50 {
+  background-color: rgba(234, 179, 8, 0.10) !important;
+}
+
+html.dark .bg-pink-200\/40 {
+  background-color: rgba(236, 72, 153, 0.10) !important;
+}
+
+html.dark .text-purple-200 {
+  color: #4c1d95 !important;
+}
+
+html.dark .text-yellow-300 {
+  color: #854d0e !important;
+}
+
+html.dark .text-pink-200 {
+  color: #831843 !important;
+}
+/* Learn your way section */
+html.dark .bg-\[\#faf8ff\] {
+  background-color: #0c0a09 !important;
+}
+
+html.dark .bg-\[\#faf8ff\] .text-stone-950,
+html.dark .bg-\[\#faf8ff\] .text-stone-900 {
+  color: #fafaf9 !important;
+}
+
+html.dark .bg-\[\#faf8ff\] .text-stone-600,
+html.dark .bg-\[\#faf8ff\] .text-stone-500 {
+  color: #a8a29e !important;
+}
+
+html.dark .bg-\[\#faf8ff\] .border-stone-200,
+html.dark .bg-\[\#faf8ff\] .border-stone-300 {
+  border-color: #292524 !important;
 }
