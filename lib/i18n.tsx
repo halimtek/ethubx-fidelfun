@@ -1,5 +1,6 @@
 "use client";
 
+import { progress } from "framer-motion";
 import {
   createContext,
   useContext,
@@ -220,24 +221,36 @@ const translations = {
       tryAgain: "Try again",
       backToLearn: "Back to learning",
     },
+progress: {
+  
+    eyebrow: "Your progress",
+    title: "Keep learning.",
+    description:
+      "Track your practice and quiz progress as you learn Fidel.",
 
-    progress: {
-      eyebrow: "Your learning",
-      title: "Progress that stays with you.",
-      description:
-        "Your practice and quiz scores are saved locally in your browser. No account is needed.",
-      practiceScore: "Practice score",
-      quizScore: "Quiz score",
-      bestStreak: "Best quiz streak",
-      sessions: "Practice sessions",
-      reset: "Reset progress",
-      resetText:
-        "This will remove your saved practice and quiz progress from this browser.",
-      noProgress: "No progress yet.",
-      startLearning: "Start learning",
-      keepLearning: "Keep learning",
-      local: "Saved locally on this device",
-    },
+    practiceScore: "Quiz progress",
+    quizScore: "Your best score",
+    bestStreak: "Best streak",
+    sessions: "Sessions",
+
+    points: "points",
+    fidelFamilies: "Fidel families",
+    familiesAvailable: "Families available to explore",
+
+    practiceGoal: "Practice goal",
+    keepGoing: "Keep going",
+    dailyTip: "Learn a little Fidel every day.",
+
+    reset: "Reset progress",
+    resetText: "Your progress has been reset.",
+    noProgress:
+      "Complete a quiz and your score will appear here.",
+    startLearning: "Ready to learn?",
+    keepLearning:
+      "Keep practicing and try to beat your score.",
+    local: "Saved locally",
+  },
+
 
     footer: {
       tagline:
@@ -414,21 +427,35 @@ const translations = {
       backToLearn: "ወደ መማር ተመለስ",
     },
 
-    progress: {
-      eyebrow: "የእርስዎ ትምህርት",
-      title: "እድገትዎን ይከታተሉ።",
-      description: "የልምምድ እና የፈተና ውጤቶችዎ በአሳሽዎ ውስጥ ይቀመጣሉ። መለያ አያስፈልግም።",
-      practiceScore: "የልምምድ ውጤት",
-      quizScore: "የፈተና ውጤት",
-      bestStreak: "ከፍተኛ የፈተና ተከታታይ",
-      sessions: "የልምምድ ጊዜዎች",
-      reset: "እድገትን አጥፋ",
-      resetText: "ይህ በዚህ አሳሽ ውስጥ የተቀመጠውን የልምምድና የፈተና እድገት ያጠፋል።",
-      noProgress: "እስካሁን እድገት የለም።",
-      startLearning: "መማር ጀምር",
-      keepLearning: "መማርህን ቀጥል",
-      local: "በዚህ መሣሪያ ላይ ተቀምጧል",
-    },
+   progress:{
+    
+    eyebrow: "የእርስዎ እድገት",
+    title: "መማርዎን ይቀጥሉ።",
+    description:
+      "ፊደል ሲማሩ የልምምድ እና የፈተና እድገትዎን ይከታተሉ።",
+
+    practiceScore: "የፈተና እድገት",
+    quizScore: "ምርጥ ውጤትዎ",
+    bestStreak: "ምርጥ ተከታታይ ውጤት",
+    sessions: "ክፍለ ጊዜዎች",
+
+    points: "ነጥቦች",
+    fidelFamilies: "የፊደል ቤተሰቦች",
+    familiesAvailable: "ለመማር የሚገኙ ቤተሰቦች",
+
+    practiceGoal: "የልምምድ ግብ",
+    keepGoing: "ይቀጥሉ",
+    dailyTip: "በየቀኑ ትንሽ ፊደል ይማሩ።",
+
+    reset: "እድገትን ዳግም አስጀምር",
+    resetText: "እድገትዎ ዳግም ተጀምሯል።",
+    noProgress:
+      "ፈተና ይውሰዱ እና ውጤትዎ እዚህ ይታያል።",
+    startLearning: "ለመማር ዝግጁ ነዎት?",
+    keepLearning:
+      "ልምምድዎን ይቀጥሉ እና ውጤትዎን ለማሻሻል ይሞክሩ።",
+    local: "በመሳሪያው ላይ ተቀምጧል",
+  },
 
     footer: {
       tagline: "ፊደልን፣ ቃላትን፣ ጽሑፍን እና ልምምድን በመጠቀም አማርኛ ፊደልን ለመማር ቀላል መንገድ።",
@@ -603,19 +630,33 @@ const translations = {
     },
 
     progress: {
-      eyebrow: "Guddina kee",
-      title: "Guddina kee hordofi.",
-      description: "Qabxiin shaakalaa fi qormaataa browser kee keessatti kuufama. Account hin barbaachisu.",
-      practiceScore: "Qabxii shaakalaa",
-      quizScore: "Qabxii qormaataa",
-      bestStreak: "Walitti aansaa qormaataa gaarii",
-      sessions: "Yeroo shaakalaa",
-      reset: "Guddina haqii",
-      resetText: "Kun guddina shaakalaa fi qormaataa browser kana keessatti kuufame ni haqa.",
-      noProgress: "Ammaaf guddinni hin jiru.",
-      startLearning: "Barachuu jalqabi",
-      keepLearning: "Barachuu itti fufi",
-      local: "Meeshaa kana irratti kuufame",
+    eyebrow: "Guddina kee",
+    title: "Barachuu itti fufi.",
+    description:
+      "Yeroo Fidel barattu guddina shaakala fi qormaataa kee hordofi.",
+
+    practiceScore: "Guddina qormaataa",
+    quizScore: "Qabxii kee isa gaarii",
+    bestStreak: "Walitti aansaa kee isa gaarii",
+    sessions: "Yeroo barnootaa",
+
+    points: "qabxii",
+    fidelFamilies: "Maatii Fidel",
+    familiesAvailable: "Maatiiwwan qorachuuf jiran",
+
+    practiceGoal: "Kaayyoo shaakalaa",
+    keepGoing: "Itti fufi",
+    dailyTip: "Guyyaa guyyaan Fidel xiqqoo baradhu.",
+
+    reset: "Guddina deebisii jalqabi",
+    resetText: "Guddinni kee deebifamee jalqabameera.",
+    noProgress:
+      "Qormaata xumuri; qabxiin kee as irratti mul'ata.",
+    startLearning: "Barachuuf qophiidhaa?",
+    keepLearning:
+      "Shaakala itti fufiitii qabxii kee fooyyeessuuf yaali.",
+    local: "Meeshaa irratti kuufame",
+
     },
 
     footer: {
@@ -791,19 +832,34 @@ const translations = {
     },
 
     progress: {
-      eyebrow: "تعلّمك",
-      title: "تابع تقدمك.",
-      description: "يتم حفظ نتائج التدريب والاختبار محليًا في المتصفح. لا تحتاج إلى حساب.",
-      practiceScore: "نتيجة التدريب",
-      quizScore: "نتيجة الاختبار",
-      bestStreak: "أفضل تتابع في الاختبار",
-      sessions: "جلسات التدريب",
-      reset: "إعادة ضبط التقدم",
-      resetText: "سيؤدي ذلك إلى حذف تقدم التدريب والاختبار المحفوظ في هذا المتصفح.",
-      noProgress: "لا يوجد تقدم بعد.",
-      startLearning: "ابدأ التعلّم",
-      keepLearning: "واصل التعلّم",
-      local: "محفوظ محليًا على هذا الجهاز",
+    eyebrow: "تقدمك",
+    title: "واصل التعلم.",
+    description:
+      "تابع تقدمك في التدريب والاختبارات أثناء تعلم الفِدِل.",
+
+    practiceScore: "تقدم الاختبار",
+    quizScore: "أفضل نتيجة لك",
+    bestStreak: "أفضل سلسلة",
+    sessions: "الجلسات",
+
+    points: "نقاط",
+    fidelFamilies: "عائلات الفِدِل",
+    familiesAvailable: "العائلات المتاحة للاستكشاف",
+
+    practiceGoal: "هدف التدريب",
+    keepGoing: "واصل التقدم",
+    dailyTip: "تعلم القليل من الفِدِل كل يوم.",
+
+    reset: "إعادة ضبط التقدم",
+    resetText: "تمت إعادة ضبط تقدمك.",
+    noProgress:
+      "أكمل اختبارًا وستظهر نتيجتك هنا.",
+    startLearning: "هل أنت مستعد للتعلم؟",
+    keepLearning:
+      "واصل التدريب وحاول تحسين نتيجتك.",
+    local: "محفوظ على الجهاز",
+
+
     },
 
     footer: {
@@ -977,23 +1033,41 @@ const translations = {
       tryAgain: "እንደገና ፈትን",
       backToLearn: "ናብ ምምሃር ተመለስ",
     },
-
     progress: {
-      eyebrow: "ዕቤትካ",
-      title: "ዕቤትካ ተኸታተል።",
-      description: "ውጽኢት ልምምድን ፈተናን ኣብ browser ብኣካል ይዕቀብ። Account ኣየድልን።",
-      practiceScore: "ውጽኢት ልምምድ",
-      quizScore: "ውጽኢት ፈተና",
-      bestStreak: "ዝበለጸ ተኸታታሊ ፈተና",
-      sessions: "ናይ ልምምድ ግዜታት",
-      reset: "ዕቤት ሰርዝ",
-      resetText: "እዚ ኣብዚ browser ዝተዓቀበ ዕቤት ልምምድን ፈተናን ክስርዝ እዩ።",
-      noProgress: "ክሳብ ሕጂ ዕቤት የለን።",
-      startLearning: "ምምሃር ጀምር",
-      keepLearning: "ምምሃር ቀጽል",
-      local: "ኣብዚ መሳርሒ ተዓቂቡ",
-    },
 
+    eyebrow: "ዕቤትካ",
+    title: "ምምሃርካ ቀጽል።",
+    description:
+      "ፊደል እናተማሃርካ ዕቤት ልምምድካን ፈተናኻን ተኸታተል።",
+
+    practiceScore: "ዕቤት ፈተና",
+    quizScore: "ዝበለጸ ውጽኢትካ",
+    bestStreak: "ዝበለጸ ተኸታታሊ ውጽኢት",
+    sessions: "ክፍለ ግዜታት",
+
+    points: "ነጥብታት",
+    fidelFamilies: "ስድራቤታት ፊደል",
+    familiesAvailable:
+      "ንምምርማር ዝርከቡ ስድራቤታት",
+
+    practiceGoal: "ዕላማ ልምምድ",
+    keepGoing: "ቀጽል",
+    dailyTip:
+      "ኩሉ መዓልቲ ቁሩብ ፊደል ተማሃር።",
+
+    reset: "ዕቤት ዳግማይ ኣጀምር",
+    resetText:
+      "ዕቤትካ ዳግማይ ተጀሚሩ።",
+    noProgress:
+      "ፈተና ወዲእካ ውጽኢትካ ኣብዚ ክርአ እዩ።",
+    startLearning:
+      "ንምምሃር ድሉው ዲኻ?",
+    keepLearning:
+      "ልምምድካ ቀጽል እሞ ውጽኢትካ ንምምሕያሽ ፈትን።",
+    local: "ኣብ መሳርሒ ተዓቂቡ",
+  },
+
+  
     footer: {
       tagline: "ፊደል፣ ቃላት፣ ጽሕፈትን ልምምድን ብምጥቃም ኣማርኛ ፊደል ንምምሃር ቀሊል መንገዲ።",
       explore: "ዳህስስ",
@@ -1007,6 +1081,7 @@ const translations = {
       madeForLearners: "ንተማሃሮ ዝተሰርሐ።",
       copyright: "EthubX FidelFun",
     },
+    
   },
 } as const;
 

@@ -7,8 +7,11 @@ import {
   BookOpen,
   RotateCcw,
 } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export default function ProgressClient() {
+  const { t } = useI18n();
+
   const [quizScore, setQuizScore] =
     useState<number | null>(null);
 
@@ -36,27 +39,27 @@ export default function ProgressClient() {
 
   if (!loaded) {
     return (
-      <div className="mt-10 animate-pulse border-y border-stone-200 py-10">
-        <div className="h-5 w-32 bg-stone-200" />
-        <div className="mt-5 h-12 w-48 bg-stone-100" />
+      <div className="mt-10 border-y border-stone-200 py-10">
+        <div className="h-5 w-32 animate-pulse bg-stone-200" />
+        <div className="mt-5 h-12 w-48 animate-pulse bg-stone-100" />
       </div>
     );
   }
 
   return (
     <section className="mt-10">
-      {/* Quiz */}
+      {/* Main progress */}
       <div className="border-y border-stone-200 py-8 sm:py-10">
         <div className="flex items-start gap-4">
           <Trophy className="mt-1 h-6 w-6 shrink-0 text-yellow-600" />
 
           <div>
             <p className="text-xs font-black uppercase tracking-wider text-stone-400">
-              Quiz progress
+              {t.progress.eyebrow}
             </p>
 
-            <h2 className="mt-1 text-2xl font-black">
-              Your best score
+            <h2 className="mt-1 text-2xl font-black text-stone-950 sm:text-3xl">
+              {t.progress.title}
             </h2>
           </div>
         </div>
@@ -64,25 +67,25 @@ export default function ProgressClient() {
         <div className="mt-8">
           {quizScore !== null ? (
             <>
-              <div className="text-6xl font-black tracking-tight text-purple-600">
+              <div className="text-5xl font-black tracking-tight text-purple-600 sm:text-6xl">
                 {quizScore}
-                <span className="ml-2 text-lg text-stone-400">
-                  points
+                <span className="ml-2 text-base font-bold text-stone-400 sm:text-lg">
+                  {t.progress.points}
                 </span>
               </div>
 
-              <p className="mt-3 text-stone-500">
-                Keep practicing and try to beat your score.
+              <p className="mt-3 max-w-xl text-sm leading-6 text-stone-500 sm:text-base">
+                {t.progress.keepLearning}
               </p>
             </>
           ) : (
             <>
-              <div className="text-3xl font-black">
-                Ready to learn?
+              <div className="text-2xl font-black text-stone-950 sm:text-3xl">
+                {t.progress.startLearning}
               </div>
 
-              <p className="mt-3 text-stone-500">
-                Complete a quiz and your score will appear here.
+              <p className="mt-3 max-w-xl text-sm leading-6 text-stone-500 sm:text-base">
+                {t.progress.noProgress}
               </p>
             </>
           )}
@@ -95,15 +98,15 @@ export default function ProgressClient() {
           <BookOpen className="h-6 w-6 text-purple-600" />
 
           <p className="mt-6 text-xs font-black uppercase tracking-wider text-stone-400">
-            Fidel families
+            {t.progress.fidelFamilies}
           </p>
 
-          <p className="mt-2 text-4xl font-black">
-            33
+          <p className="mt-2 text-4xl font-black text-stone-950">
+            34
           </p>
 
-          <p className="mt-2 text-sm text-stone-500">
-            Families available to explore
+          <p className="mt-2 text-sm leading-6 text-stone-500">
+            {t.progress.familiesAvailable}
           </p>
         </div>
 
@@ -111,27 +114,33 @@ export default function ProgressClient() {
           <Target className="h-6 w-6 text-purple-600" />
 
           <p className="mt-6 text-xs font-black uppercase tracking-wider text-stone-400">
-            Practice goal
+            {t.progress.practiceGoal}
           </p>
 
-          <p className="mt-2 text-4xl font-black">
-            Keep going
+          <p className="mt-2 text-3xl font-black text-stone-950 sm:text-4xl">
+            {t.progress.keepGoing}
           </p>
 
-          <p className="mt-2 text-sm text-stone-500">
-            Learn a little Fidel every day.
+          <p className="mt-2 text-sm leading-6 text-stone-500">
+            {t.progress.dailyTip}
           </p>
         </div>
       </div>
 
+      {/* Local storage */}
+      <p className="mt-6 text-xs font-medium text-stone-400">
+        {t.progress.local}
+      </p>
+
+      {/* Reset */}
       {quizScore !== null && (
         <button
           type="button"
           onClick={resetProgress}
-          className="mt-6 inline-flex min-h-11 items-center gap-2 text-sm font-bold text-stone-400 transition hover:text-purple-600"
+          className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-bold text-stone-400 transition hover:text-purple-600"
         >
           <RotateCcw className="h-4 w-4" />
-          Reset progress
+          {t.progress.reset}
         </button>
       )}
     </section>
