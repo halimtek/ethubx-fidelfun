@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Check, RotateCcw, X } from "lucide-react";
-import { fidelFamilies } from "@/data/fidel";import { useI18n } from "@/lib/i18n";
+import { fidelFamilies } from "@/data/fidel"; import { useI18n } from "@/lib/i18n";
 
 type QuizQuestion = {
   letter: string;
@@ -103,7 +103,7 @@ export default function QuizPage() {
     return (
       <div className="shell py-20">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-bold text-stone-500">
+          <p className="text-sm font-bold text-stone-500 dark:text-stone-400 dark:text-stone-500">
             Loading...
           </p>
         </div>
@@ -120,11 +120,11 @@ export default function QuizPage() {
       <div className="shell py-12 sm:py-20">
         <div className="mx-auto max-w-2xl text-center">
           <p className="eyebrow">{t.quiz.completed}</p>
-          <h1 className="mt-3 text-4xl font-black tracking-tight text-stone-950 sm:text-6xl">
+          <h1 className="mt-3 text-4xl font-black tracking-tight text-stone-950 dark:text-stone-100 sm:text-6xl">
             {score} / {questions.length}
           </h1>
 
-          <p className="mt-4 text-lg text-stone-600">
+          <p className="mt-4 text-lg text-stone-600 dark:text-stone-400 dark:text-stone-500">
             {percentage}%
           </p>
 
@@ -155,18 +155,18 @@ export default function QuizPage() {
       <div className="mx-auto max-w-3xl">
         <p className="eyebrow">{t.quiz.eyebrow}</p>
 
-        <h1 className="mt-2 text-4xl font-black tracking-tight text-stone-950 sm:text-6xl">
+        <h1 className="mt-2 text-4xl font-black tracking-tight text-stone-950 dark:text-stone-100 sm:text-6xl">
           {t.quiz.title}
         </h1>
 
-        <p className="mt-4 text-base leading-7 text-stone-600 sm:text-lg">
+        <p className="mt-4 text-base leading-7 text-stone-600 dark:text-stone-400 dark:text-stone-500 sm:text-lg">
           {t.quiz.description}
         </p>
 
         {/* Quiz header */}
-        <div className="mt-10 border-y border-stone-200 py-4">
+        <div className="mt-10 border-y border-stone-200 dark:border-stone-800 py-4">
           <div className="flex items-center justify-between gap-4">
-            <span className="text-sm font-bold text-stone-500">
+            <span className="text-sm font-bold text-stone-500 dark:text-stone-400 dark:text-stone-500">
               {t.quiz.question} {current + 1} / {questions.length}
             </span>
 
@@ -185,15 +185,15 @@ export default function QuizPage() {
 
         {/* Question */}
         <section className="mt-12 text-center">
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-stone-400">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-stone-400 dark:text-stone-500">
             {t.quiz.question} {current + 1}
           </p>
 
-          <div className="amharic mt-5 text-8xl font-black leading-none text-stone-950 sm:text-[10rem]">
+          <div className="amharic mt-5 text-8xl font-black leading-none text-stone-950 dark:text-stone-100 sm:text-[10rem]">
             {question.letter}
           </div>
 
-          <p className="mt-5 text-base text-stone-500">
+          <p className="mt-5 text-base text-stone-500 dark:text-stone-400 dark:text-stone-500">
             Choose the correct pronunciation.
           </p>
         </section>
@@ -205,7 +205,7 @@ export default function QuizPage() {
             const isCorrect = option === question.answer;
 
             let stateClass =
-              "border-stone-200 text-stone-800 hover:border-purple-400 hover:text-purple-700";
+              "border-stone-200 dark:border-stone-800 text-stone-800 hover:border-purple-400 hover:text-purple-700";
 
             if (selected) {
               if (isCorrect) {
@@ -216,7 +216,7 @@ export default function QuizPage() {
                   "border-red-300 bg-red-50 text-red-700";
               } else {
                 stateClass =
-                  "border-stone-200 text-stone-400";
+                  "border-stone-200 dark:border-stone-800 text-stone-400 dark:text-stone-500";
               }
             }
 
@@ -228,7 +228,7 @@ export default function QuizPage() {
                 disabled={Boolean(selected)}
                 className={`min-h-16 border px-5 py-4 text-left text-base font-bold transition ${stateClass}`}
               >
-                <span className="mr-3 text-sm text-stone-400">
+                <span className="mr-3 text-sm text-stone-400 dark:text-stone-500">
                   {String.fromCharCode(65 + index)}
                 </span>
 
@@ -248,13 +248,12 @@ export default function QuizPage() {
 
         {/* Feedback */}
         {selected && (
-          <div className="mt-6 border-t border-stone-200 pt-5">
+          <div className="mt-6 border-t border-stone-200 dark:border-stone-800 pt-5">
             <p
-              className={`text-sm font-bold ${
-                selected === question.answer
-                  ? "text-green-700"
-                  : "text-red-700"
-              }`}
+              className={`text-sm font-bold ${selected === question.answer
+                ? "text-green-700"
+                : "text-red-700"
+                }`}
             >
               {selected === question.answer
                 ? t.quiz.correct

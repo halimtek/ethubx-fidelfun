@@ -81,7 +81,7 @@ export default function QuizClient() {
           {score} / {items.length}
         </h2>
 
-        <p className="mt-2 text-stone-500">
+        <p className="mt-2 text-stone-500 dark:text-stone-400 dark:text-stone-500">
           {score === items.length
             ? "Perfect! You know your Fidel!"
             : "Great job — keep practicing and try again."}
@@ -102,7 +102,7 @@ export default function QuizClient() {
   return (
     <div className="card mt-8 p-5 sm:p-8">
       {/* Progress */}
-      <div className="flex items-center justify-between text-sm font-bold text-stone-500">
+      <div className="flex items-center justify-between text-sm font-bold text-stone-500 dark:text-stone-400 dark:text-stone-500">
         <span>
           Question {question + 1} / {items.length}
         </span>
@@ -130,7 +130,7 @@ export default function QuizClient() {
           Which sound is closest?
         </p>
 
-        <p className="mt-1 text-sm text-stone-400">
+        <p className="mt-1 text-sm text-stone-400 dark:text-stone-500">
           Choose the correct pronunciation
         </p>
       </div>
@@ -145,7 +145,7 @@ export default function QuizClient() {
             option === selected;
 
           let buttonClass =
-            "border-stone-200 hover:border-[#5b3df5] hover:bg-[#5b3df5]/5";
+            "border-stone-200 dark:border-stone-800 hover:border-[#5b3df5] hover:bg-[#5b3df5]/5";
 
           if (isSelected && isCorrect) {
             buttonClass =

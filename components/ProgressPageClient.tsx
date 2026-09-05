@@ -13,11 +13,11 @@ export default function ProgressPageClient() {
           {t.progress.eyebrow}
         </p>
 
-        <h1 className="mt-2 text-4xl font-black tracking-tight text-stone-950 sm:text-6xl">
+        <h1 className="mt-2 text-4xl font-black tracking-tight text-stone-950 dark:text-stone-100 sm:text-6xl">
           {t.progress.title}
         </h1>
 
-        <p className="mt-4 max-w-2xl text-base leading-7 text-stone-600 sm:text-lg">
+        <p className="mt-4 max-w-2xl text-base leading-7 text-stone-600 dark:text-stone-400 dark:text-stone-500 sm:text-lg">
           {t.progress.description}
         </p>
 

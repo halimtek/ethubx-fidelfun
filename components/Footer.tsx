@@ -54,7 +54,7 @@ const learnLinks = [
 
 export default function Footer() {
   return (
-    <footer className="mt-10 border-t border-stone-200 bg-white">
+    <footer className="mt-10 border-t border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950">
       {/* Main footer */}
       <div className="shell px-4 py-14 sm:px-6 sm:py-16">
         <div className="grid gap-12 lg:grid-cols-[1.4fr_0.7fr_0.9fr]">
@@ -75,7 +75,7 @@ export default function Footer() {
               </div>
             </Link>
 
-            <p className="mt-5 text-sm leading-7 text-stone-500 sm:text-base">
+            <p className="mt-5 text-sm leading-7 text-stone-500 dark:text-stone-400 dark:text-stone-500 sm:text-base">
               Making Amharic learning simple, fun, and accessible for
               everyone — especially young learners.
             </p>
@@ -86,11 +86,10 @@ export default function Footer() {
                 (letter, index) => (
                   <span
                     key={letter}
-                    className={`amharic grid h-9 w-9 place-items-center rounded-xl text-lg font-black ${
-                      index % 2 === 0
-                        ? "bg-purple-100 text-purple-600"
-                        : "bg-yellow-100 text-yellow-700"
-                    }`}
+                    className={`amharic grid h-9 w-9 place-items-center rounded-xl text-lg font-black ${index % 2 === 0
+                      ? "bg-purple-100 text-purple-600"
+                      : "bg-yellow-100 text-yellow-700"
+                      }`}
                   >
                     {letter}
                   </span>
@@ -110,7 +109,7 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="group inline-flex items-center gap-1 text-sm font-semibold text-stone-500 transition hover:text-purple-600"
+                    className="group inline-flex items-center gap-1 text-sm font-semibold text-stone-500 dark:text-stone-400 dark:text-stone-500 transition hover:text-purple-600"
                   >
                     {link.name}
                     <ArrowUpRight className="h-3.5 w-3.5 opacity-0 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
@@ -126,7 +125,7 @@ export default function Footer() {
               Follow EthubX
             </h3>
 
-            <p className="mt-4 max-w-xs text-sm leading-6 text-stone-500">
+            <p className="mt-4 max-w-xs text-sm leading-6 text-stone-500 dark:text-stone-400 dark:text-stone-500">
               Follow us for new projects, technology tips, learning resources,
               and updates.
             </p>
@@ -140,7 +139,7 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   aria-label={`EthubX on ${name}`}
                   title={name}
-                  className="group grid h-11 place-items-center rounded-xl border border-stone-200 bg-stone-50 text-stone-500 transition hover:-translate-y-1 hover:border-purple-200 hover:bg-purple-50 hover:text-purple-600 hover:shadow-sm"
+                  className="group grid h-11 place-items-center rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900 text-stone-500 dark:text-stone-400 dark:text-stone-500 transition hover:-translate-y-1 hover:border-purple-200 hover:bg-purple-50 hover:text-purple-600 hover:shadow-sm"
                 >
                   <Icon className="h-5 w-5 transition group-hover:scale-110" />
                 </a>
@@ -151,13 +150,13 @@ export default function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-stone-100 bg-stone-50">
+      <div className="border-t border-stone-100 bg-stone-50 dark:bg-stone-900">
         <div className="shell flex flex-col gap-4 px-4 py-5 sm:px-6 md:flex-row md:items-center md:justify-between">
-          <p className="text-center text-xs font-semibold text-stone-400 md:text-left">
+          <p className="text-center text-xs font-semibold text-stone-400 dark:text-stone-500 md:text-left">
             © {new Date().getFullYear()} EthubX. Made with ❤️ in Ethiopia.
           </p>
 
-          <div className="flex items-center justify-center gap-5 text-xs font-semibold text-stone-400">
+          <div className="flex items-center justify-center gap-5 text-xs font-semibold text-stone-400 dark:text-stone-500">
             <Link
               href="/"
               className="transition hover:text-purple-600"

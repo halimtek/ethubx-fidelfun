@@ -77,10 +77,10 @@ export default function PracticeClient({ words }: { words: Word[] }) {
   }
 
   return (
-    <section className="mt-10 border-y border-stone-200 py-7 sm:py-9">
+    <section className="mt-10 border-y border-stone-200 dark:border-stone-800 py-7 sm:py-9">
       {/* Progress */}
       <div className="flex items-center justify-between gap-4">
-        <span className="text-sm font-bold text-stone-500">
+        <span className="text-sm font-bold text-stone-500 dark:text-stone-400 dark:text-stone-500">
           {index + 1} / {words.length}
         </span>
 
@@ -98,24 +98,23 @@ export default function PracticeClient({ words }: { words: Word[] }) {
 
       {/* Prompt */}
       <div className="mt-10 text-center">
-        <p className="text-xs font-black uppercase tracking-[0.18em] text-stone-400">
+        <p className="text-xs font-black uppercase tracking-[0.18em] text-stone-400 dark:text-stone-500">
           {reverse
             ? "Write the Amharic word"
             : "Write it in English"}
         </p>
 
         <div
-          className={`mt-5 font-black tracking-tight text-stone-950 ${
-            reverse
-              ? "text-5xl sm:text-7xl"
-              : "amharic text-7xl sm:text-9xl"
-          }`}
+          className={`mt-5 font-black tracking-tight text-stone-950 dark:text-stone-100 ${reverse
+            ? "text-5xl sm:text-7xl"
+            : "amharic text-7xl sm:text-9xl"
+            }`}
         >
           {prompt}
         </div>
 
         {word.hint && (
-          <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-stone-500">
+          <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-stone-500 dark:text-stone-400 dark:text-stone-500">
             {word.hint}
           </p>
         )}
@@ -140,17 +139,16 @@ export default function PracticeClient({ words }: { words: Word[] }) {
               ? "Type አማርኛ here..."
               : "Type English here..."
           }
-          className="w-full border border-stone-300 bg-white px-4 py-4 text-center text-lg font-bold text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-purple-600 sm:text-xl"
+          className="w-full border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-950 px-4 py-4 text-center text-lg font-bold text-stone-900 outline-none transition placeholder:text-stone-400 dark:text-stone-500 focus:border-purple-600 sm:text-xl"
         />
 
         {/* Result */}
         {result !== "idle" && (
           <div
-            className={`mt-4 border px-4 py-4 text-center text-sm font-bold ${
-              result === "correct"
-                ? "border-green-200 bg-green-50 text-green-700"
-                : "border-red-200 bg-red-50 text-red-700"
-            }`}
+            className={`mt-4 border px-4 py-4 text-center text-sm font-bold ${result === "correct"
+              ? "border-green-200 bg-green-50 text-green-700"
+              : "border-red-200 bg-red-50 text-red-700"
+              }`}
           >
             {result === "correct" ? (
               <>
