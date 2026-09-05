@@ -1,24 +1,27 @@
 "use client";
 
 import {
-  Eraser,
-  Volume2,
   ChevronLeft,
   ChevronRight,
+  Eraser,
   Eye,
   EyeOff,
   RotateCcw,
-  Sparkles,
+  Volume2,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+
 import { allForms } from "@/data/fidel";
+import { useI18n } from "@/lib/i18n";
 
 export default function TraceClient() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const searchParams = useSearchParams();
+  const { t } = useI18n();
 
   const [index, setIndex] = useState(0);
   const [showGuide, setShowGuide] = useState(true);
@@ -26,9 +29,14 @@ export default function TraceClient() {
 
   const current = allForms[index];
 
-  // ------------------------------------------
-  // Start from ?letter=...
-  // ------------------------------------------
+  /*
+   * ---------------------------------------------------------
+   * Read selected letter from URL
+   *
+   * Example:
+   * /trace?letter=ቀ
+   * ---------------------------------------------------------
+   */
   useEffect(() => {
     const requestedLetter = searchParams.get("letter");
 
@@ -43,74 +51,105 @@ export default function TraceClient() {
     }
   }, [searchParams]);
 
-  // ------------------------------------------
-  // Resize canvas correctly on every screen
-  // ------------------------------------------
-  // ------------------------------------------
-// Resize canvas correctly on every screen
-// ------------------------------------------
-useEffect(() => {
-  function resizeCanvas() {
-    const container = containerRef.current;
+  /*
+   * ---------------------------------------------------------
+   * Canvas setup
+   * ---------------------------------------------------------
+   */
+  const setupCanvas = useCallback(() => {
     const canvas = canvasRef.current;
+    const container = containerRef.current;
 
-    if (!container || !canvas) return;
+    if (!canvas || !container) return;
 
     const rect = container.getBoundingClientRect();
 
-    const width = Math.max(280, Math.floor(rect.width));
-    const height = width;
+    const size = Math.max(
+      1,
+      Math.floor(Math.min(rect.width, 420))
+    );
 
-    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    const pixelRatio = Math.min(
+      window.devicePixelRatio || 1,
+      2
+    );
 
-    canvas.width = width * pixelRatio;
-    canvas.height = height * pixelRatio;
+    canvas.width = size * pixelRatio;
+    canvas.height = size * pixelRatio;
 
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
+    canvas.style.width = `${size}px`;
+    canvas.style.height = `${size}px`;
 
     const ctx = canvas.getContext("2d");
 
     if (!ctx) return;
 
-    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    ctx.setTransform(
+      pixelRatio,
+      0,
+      0,
+      pixelRatio,
+      0,
+      0
+    );
 
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    ctx.lineWidth = Math.max(7, Math.min(11, width / 45));
+    ctx.lineWidth = Math.max(
+      6,
+      Math.min(10, size / 42)
+    );
+
     ctx.strokeStyle = "#7c3aed";
-  }
+  }, []);
 
-  resizeCanvas();
+  useEffect(() => {
+    setupCanvas();
 
-  const observer = new ResizeObserver(resizeCanvas);
+    const observer = new ResizeObserver(() => {
+      setupCanvas();
+    });
 
-  const container = containerRef.current;
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
 
-  if (container) {
-    observer.observe(container);
-  }
+    window.addEventListener("resize", setupCanvas);
+    window.addEventListener(
+      "orientationchange",
+      setupCanvas
+    );
 
-  window.addEventListener("resize", resizeCanvas);
-  window.addEventListener("orientationchange", resizeCanvas);
+    return () => {
+      observer.disconnect();
 
-  return () => {
-    observer.disconnect();
-    window.removeEventListener("resize", resizeCanvas);
-    window.removeEventListener("orientationchange", resizeCanvas);
-  };
-}, []);
+      window.removeEventListener(
+        "resize",
+        setupCanvas
+      );
 
-  // ------------------------------------------
-  // Get pointer position
-  // ------------------------------------------
-  function getPosition(
+      window.removeEventListener(
+        "orientationchange",
+        setupCanvas
+      );
+    };
+  }, [setupCanvas]);
+
+  /*
+   * ---------------------------------------------------------
+   * Get pointer position
+   * ---------------------------------------------------------
+   */
+  const getPoint = (
     event: React.PointerEvent<HTMLCanvasElement>
-  ) {
+  ) => {
     const canvas = canvasRef.current;
 
     if (!canvas) {
-      return { x: 0, y: 0 };
+      return {
+        x: 0,
+        y: 0,
+      };
     }
 
     const rect = canvas.getBoundingClientRect();
@@ -119,347 +158,455 @@ useEffect(() => {
       x: event.clientX - rect.left,
       y: event.clientY - rect.top,
     };
-  }
+  };
 
-  // ------------------------------------------
-  // Start drawing
-  // ------------------------------------------
-  function startDrawing(
+  /*
+   * ---------------------------------------------------------
+   * Start drawing
+   * ---------------------------------------------------------
+   */
+  const startDrawing = (
     event: React.PointerEvent<HTMLCanvasElement>
-  ) {
-    event.preventDefault();
-
+  ) => {
     const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
 
-    if (!canvas) return;
+    if (!canvas || !ctx) return;
+
+    event.preventDefault();
 
     canvas.setPointerCapture(event.pointerId);
 
-    const ctx = canvas.getContext("2d");
-
-    if (!ctx) return;
-
-    const { x, y } = getPosition(event);
+    const { x, y } = getPoint(event);
 
     ctx.beginPath();
     ctx.moveTo(x, y);
 
     setDrawing(true);
-  }
+  };
 
-  // ------------------------------------------
-  // Draw
-  // ------------------------------------------
-  function draw(
+  /*
+   * ---------------------------------------------------------
+   * Draw
+   * ---------------------------------------------------------
+   */
+  const draw = (
     event: React.PointerEvent<HTMLCanvasElement>
-  ) {
+  ) => {
     if (!drawing) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+
+    if (!canvas || !ctx) return;
 
     event.preventDefault();
 
-    const canvas = canvasRef.current;
-
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-
-    if (!ctx) return;
-
-    const { x, y } = getPosition(event);
+    const { x, y } = getPoint(event);
 
     ctx.lineTo(x, y);
     ctx.stroke();
-  }
+  };
 
-  // ------------------------------------------
-  // Stop
-  // ------------------------------------------
-  function stopDrawing(
-    event: React.PointerEvent<HTMLCanvasElement>
-  ) {
-    event.preventDefault();
-
+  /*
+   * ---------------------------------------------------------
+   * Stop drawing
+   * ---------------------------------------------------------
+   */
+  const stopDrawing = (
+    event?: React.PointerEvent<HTMLCanvasElement>
+  ) => {
     const canvas = canvasRef.current;
 
-    if (canvas?.hasPointerCapture(event.pointerId)) {
-      canvas.releasePointerCapture(event.pointerId);
+    if (canvas && event) {
+      try {
+        canvas.releasePointerCapture(
+          event.pointerId
+        );
+      } catch {
+        // Pointer already released.
+      }
     }
 
     setDrawing(false);
-  }
+  };
 
-  // ------------------------------------------
-  // Clear drawing
-  // ------------------------------------------
-  function clearCanvas() {
+  /*
+   * ---------------------------------------------------------
+   * Clear drawing
+   * ---------------------------------------------------------
+   */
+  const clearCanvas = () => {
     const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
 
-    if (!canvas) return;
+    if (!canvas || !ctx) return;
 
-    const ctx = canvas.getContext("2d");
-
-    if (!ctx) return;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
-
-  // ------------------------------------------
-  // Navigation
-  // ------------------------------------------
-  function previous() {
-    clearCanvas();
-
-    setIndex((value) =>
-      value === 0 ? allForms.length - 1 : value - 1
+    ctx.clearRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height
     );
-  }
 
-  function next() {
-    clearCanvas();
+    setupCanvas();
+  };
 
-    setIndex((value) =>
-      value === allForms.length - 1 ? 0 : value + 1
+  /*
+   * ---------------------------------------------------------
+   * Previous letter
+   * ---------------------------------------------------------
+   */
+  const goPrevious = () => {
+    setIndex((currentIndex) =>
+      currentIndex === 0
+        ? allForms.length - 1
+        : currentIndex - 1
     );
-  }
 
-  // ------------------------------------------
-  // Pronunciation
-  // ------------------------------------------
-  function speak() {
-    if (
-      typeof window === "undefined" ||
-      !("speechSynthesis" in window)
-    ) {
-      return;
-    }
+    clearCanvas();
+  };
+
+  /*
+   * ---------------------------------------------------------
+   * Next letter
+   * ---------------------------------------------------------
+   */
+  const goNext = () => {
+    setIndex((currentIndex) =>
+      currentIndex === allForms.length - 1
+        ? 0
+        : currentIndex + 1
+    );
+
+    clearCanvas();
+  };
+
+  /*
+   * ---------------------------------------------------------
+   * Speak letter
+   * ---------------------------------------------------------
+   */
+  const speakLetter = () => {
+    if (typeof window === "undefined") return;
+
+    if (!("speechSynthesis" in window)) return;
 
     window.speechSynthesis.cancel();
 
-    const voices = window.speechSynthesis.getVoices();
+    const utterance =
+      new SpeechSynthesisUtterance(
+        current.pronunciation
+      );
+
+    utterance.lang = "am-ET";
+    utterance.rate = 0.78;
+    utterance.pitch = 1;
+
+    const voices =
+      window.speechSynthesis.getVoices();
 
     const amharicVoice =
       voices.find((voice) =>
-        voice.lang.toLowerCase().startsWith("am")
+        voice.lang
+          .toLowerCase()
+          .startsWith("am")
       ) ||
       voices.find((voice) =>
-        voice.lang.toLowerCase().includes("et")
+        voice.lang
+          .toLowerCase()
+          .startsWith("et")
       );
 
-    const utterance = new SpeechSynthesisUtterance();
-
     if (amharicVoice) {
-      utterance.text = current.letter;
       utterance.voice = amharicVoice;
-      utterance.lang = amharicVoice.lang;
-    } else {
-      utterance.text = current.pronunciation;
-      utterance.lang = "en-US";
     }
 
-    utterance.rate = 0.62;
-    utterance.pitch = 1.05;
-
     window.speechSynthesis.speak(utterance);
-  }
+  };
+
+  /*
+   * ---------------------------------------------------------
+   * Progress
+   * ---------------------------------------------------------
+   */
+  const progress =
+    ((index + 1) / allForms.length) * 100;
 
   return (
-    <div className="mx-auto w-full max-w-3xl">
-      {/* Friendly intro */}
-      <div className="mb-5 text-center sm:mb-7">
-        <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-yellow-100 px-4 py-2 text-sm font-black text-yellow-700">
-          <Sparkles size={16} />
-          Let's practice!
-        </div>
+    <section className="mx-auto w-full max-w-4xl">
+      {/* Header */}
+      <div className="mb-8 text-center sm:mb-10">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-purple-600">
+          {t.trace.eyebrow}
+        </p>
 
-        <h1 className="text-3xl font-black tracking-tight text-gray-900 sm:text-5xl">
-          Write this Fidel ✏️
+        <h1 className="mt-2 text-3xl font-black tracking-tight text-stone-950 sm:text-5xl">
+          {t.trace.title} {current.letter}
         </h1>
 
-        <p className="mx-auto mt-2 max-w-xl text-sm text-gray-500 sm:text-base">
-          Use your finger, mouse, stylus, or trackpad to follow the letter.
+        <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-stone-600 sm:text-base">
+          {t.trace.description}
         </p>
       </div>
 
-      {/* Current letter */}
-      <div className="mb-5 flex items-center justify-center gap-4 sm:mb-7">
-        <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-purple-100 sm:h-24 sm:w-24">
-          <span className="text-5xl font-black text-purple-700 sm:text-6xl">
-            {current.letter}
-          </span>
+      {/* Letter information */}
+      <div className="mb-6 flex flex-col items-center justify-between gap-4 border-y border-stone-200 py-5 sm:flex-row">
+        <div className="text-center sm:text-left">
+          <p className="text-xs font-bold uppercase tracking-wider text-stone-500">
+            {t.trace.letter}
+          </p>
+
+          <div className="mt-1 flex items-baseline justify-center gap-3 sm:justify-start">
+            <span className="amharic text-5xl font-black leading-none text-purple-600 sm:text-6xl">
+              {current.letter}
+            </span>
+
+            <span className="text-lg font-bold text-stone-700">
+              {current.pronunciation}
+            </span>
+          </div>
         </div>
 
-        <div>
-          <div className="text-2xl font-black text-gray-900 sm:text-3xl">
-            {current.transliteration}
-          </div>
+        <button
+          type="button"
+          onClick={speakLetter}
+          className="inline-flex min-h-11 items-center justify-center gap-2 border border-stone-300 px-4 py-2 text-sm font-bold text-stone-800 transition hover:border-purple-400 hover:text-purple-700 active:scale-[0.98]"
+        >
+          <Volume2 className="h-4 w-4" />
+          {t.common.hear}
+        </button>
+      </div>
 
-          <button
-            onClick={speak}
+      {/* Tracing area */}
+      <div className="flex justify-center px-2 sm:px-0">
+        <div
+          ref={containerRef}
+          className="
+            relative
+            aspect-square
+            w-[min(88vw,420px)]
+            overflow-hidden
+            border
+            border-stone-200
+            bg-white
+          "
+        >
+          {/* Guide */}
+          {showGuide && (
+            <div
+              aria-hidden="true"
+              className="
+                pointer-events-none
+                absolute
+                inset-0
+                grid
+                place-items-center
+                select-none
+              "
+            >
+              <span
+                className="
+                  amharic
+                  text-[clamp(9rem,42vw,18rem)]
+                  font-black
+                  leading-none
+                  text-purple-100
+                "
+              >
+                {current.letter}
+              </span>
+            </div>
+          )}
+
+          {/* Canvas */}
+          <canvas
+            ref={canvasRef}
             className="
-              mt-2 inline-flex min-h-10 items-center gap-2
-              rounded-xl bg-purple-100 px-3 py-2
-              text-sm font-bold text-purple-700
-              active:scale-95
+              absolute
+              inset-0
+              block
+              h-full
+              w-full
+              touch-none
+              cursor-crosshair
             "
-          >
-            <Volume2 size={17} />
-            Hear it
-          </button>
+            onPointerDown={startDrawing}
+            onPointerMove={draw}
+            onPointerUp={stopDrawing}
+            onPointerCancel={stopDrawing}
+          />
+
+          {/* Drawing indicator */}
+          {drawing && (
+            <div className="pointer-events-none absolute bottom-3 left-3 border border-purple-200 bg-white/90 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-purple-700">
+              {t.trace.drawing}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Drawing area */}
-      <div
-        ref={containerRef}
-        className="
-          relative mx-auto w-full max-w-[620px]
-          overflow-hidden rounded-[2rem]
-          border-4 border-purple-100
-          bg-white shadow-xl shadow-purple-100
-        "
-      >
-        {/* Guide letter */}
-        {showGuide && (
-          <div
-            className="
-              pointer-events-none absolute inset-0
-              flex items-center justify-center
-              select-none
-            "
-            aria-hidden="true"
-          >
-            <span
-              className="
-                font-black leading-none
-                text-[clamp(12rem,48vw,25rem)]
-                text-purple-100
-              "
-            >
-              {current.letter}
-            </span>
-          </div>
-        )}
+      {/* Guide toggle */}
+      <div className="mt-5 flex justify-center">
+        <button
+          type="button"
+          onClick={() =>
+            setShowGuide((visible) => !visible)
+          }
+          className="inline-flex min-h-10 items-center gap-2 px-3 py-2 text-sm font-bold text-stone-600 transition hover:text-purple-700"
+        >
+          {showGuide ? (
+            <EyeOff className="h-4 w-4" />
+          ) : (
+            <Eye className="h-4 w-4" />
+          )}
 
-        {/* Canvas */}
-        <canvas
-          ref={canvasRef}
-          onPointerDown={startDrawing}
-          onPointerMove={draw}
-          onPointerUp={stopDrawing}
-          onPointerCancel={stopDrawing}
-          onPointerLeave={stopDrawing}
-          className="
-            relative z-10 block w-full
-            touch-none
-            cursor-crosshair
-          "
-          style={{
-            touchAction: "none",
-          }}
-        />
-
-        {/* Mobile hint */}
-        <div className="pointer-events-none absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full bg-white/90 px-4 py-2 text-xs font-bold text-gray-500 shadow-sm">
-          👆 Trace with your finger
-        </div>
+          {showGuide
+            ? t.trace.hideGuide
+            : t.trace.showGuide}
+        </button>
       </div>
 
       {/* Controls */}
-      <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="mx-auto mt-6 grid w-full max-w-[420px] grid-cols-2 border-y border-stone-200 sm:grid-cols-4">
         <button
-          onClick={previous}
+          type="button"
+          onClick={goPrevious}
           className="
-            flex min-h-12 items-center justify-center gap-2
-            rounded-2xl border-2 border-gray-100
-            bg-white px-4 py-3
-            font-bold text-gray-700
-            shadow-sm transition
-            active:scale-95
+            flex
+            min-h-12
+            items-center
+            justify-center
+            gap-2
+            border-b
+            border-r
+            border-stone-200
+            px-3
+            text-sm
+            font-bold
+            text-stone-700
+            transition
+            hover:text-purple-700
+            sm:border-b-0
           "
         >
-          <ChevronLeft size={20} />
-          Previous
+          <ChevronLeft className="h-4 w-4" />
+          {t.common.previous}
         </button>
 
         <button
-          onClick={next}
-          className="
-            flex min-h-12 items-center justify-center gap-2
-            rounded-2xl bg-purple-600
-            px-4 py-3 font-bold text-white
-            shadow-md transition
-            active:scale-95
-          "
-        >
-          Next
-          <ChevronRight size={20} />
-        </button>
-
-        <button
+          type="button"
           onClick={clearCanvas}
           className="
-            flex min-h-12 items-center justify-center gap-2
-            rounded-2xl border-2 border-red-100
-            bg-red-50 px-4 py-3
-            font-bold text-red-600
-            active:scale-95
+            flex
+            min-h-12
+            items-center
+            justify-center
+            gap-2
+            border-b
+            border-stone-200
+            px-3
+            text-sm
+            font-bold
+            text-stone-700
+            transition
+            hover:text-purple-700
+            sm:border-b-0
+            sm:border-r
           "
         >
-          <Eraser size={19} />
-          Clear
+          <Eraser className="h-4 w-4" />
+          {t.common.clear}
         </button>
 
         <button
-          onClick={() => setShowGuide((value) => !value)}
+          type="button"
+          onClick={clearCanvas}
           className="
-            flex min-h-12 items-center justify-center gap-2
-            rounded-2xl border-2 border-purple-100
-            bg-purple-50 px-4 py-3
-            font-bold text-purple-700
-            active:scale-95
+            flex
+            min-h-12
+            items-center
+            justify-center
+            gap-2
+            border-r
+            border-stone-200
+            px-3
+            text-sm
+            font-bold
+            text-stone-700
+            transition
+            hover:text-purple-700
           "
         >
-          {showGuide ? (
-            <>
-              <EyeOff size={19} />
-              Hide guide
-            </>
-          ) : (
-            <>
-              <Eye size={19} />
-              Show guide
-            </>
-          )}
+          <RotateCcw className="h-4 w-4" />
+          {t.common.reset}
+        </button>
+
+        <button
+          type="button"
+          onClick={goNext}
+          className="
+            flex
+            min-h-12
+            items-center
+            justify-center
+            gap-2
+            px-3
+            text-sm
+            font-bold
+            text-stone-700
+            transition
+            hover:text-purple-700
+          "
+        >
+          {t.common.next}
+          <ChevronRight className="h-4 w-4" />
         </button>
       </div>
 
       {/* Progress */}
-      <div className="mt-6 rounded-3xl bg-gray-50 p-4">
-        <div className="mb-2 flex items-center justify-between text-xs font-bold text-gray-500">
-          <span>Fidel practice</span>
+      <div className="mx-auto mt-8 w-full max-w-[420px]">
+        <div className="mb-2 flex items-center justify-between text-xs font-bold text-stone-500">
           <span>
-            {index + 1} / {allForms.length}
+            {t.trace.letter} {index + 1} /{" "}
+            {allForms.length}
           </span>
+
+          <span>{Math.round(progress)}%</span>
         </div>
 
-        <div className="h-3 overflow-hidden rounded-full bg-gray-200">
+        <div className="h-1 w-full bg-stone-200">
           <div
-            className="h-full rounded-full bg-purple-500 transition-all duration-300"
+            className="h-1 bg-purple-600 transition-all duration-300"
             style={{
-              width: `${((index + 1) / allForms.length) * 100}%`,
+              width: `${progress}%`,
             }}
           />
         </div>
       </div>
 
-      {/* Reset */}
-      <button
-        onClick={clearCanvas}
-        className="mx-auto mt-5 flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-purple-600"
-      >
-        <RotateCcw size={15} />
-        Start again
-      </button>
-    </div>
+      {/* Bottom navigation */}
+      <div className="mt-10 flex flex-col items-center justify-center gap-4 border-t border-stone-200 pt-6 sm:flex-row">
+        <Link
+          href="/learn"
+          className="text-sm font-bold text-stone-600 transition hover:text-purple-700"
+        >
+          ← {t.common.back}
+        </Link>
+
+        <span className="hidden text-stone-300 sm:inline">
+          |
+        </span>
+
+        <Link
+          href={`/trace?letter=${encodeURIComponent(
+            current.letter
+          )}`}
+          className="text-sm font-bold text-purple-700 transition hover:text-purple-900"
+        >
+          {t.trace.practiceAgain}
+        </Link>
+      </div>
+    </section>
   );
 }

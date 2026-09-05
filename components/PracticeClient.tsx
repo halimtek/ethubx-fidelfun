@@ -3,74 +3,202 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Word } from "@/data/words";
 import { Check, RotateCcw, Shuffle, X } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
-export default function PracticeClient({words}:{words:Word[]}) {
-  const [index,setIndex] = useState(0);
-  const [reverse,setReverse] = useState(false);
-  const [answer,setAnswer] = useState("");
-  const [result,setResult] = useState<"idle"|"correct"|"wrong">("idle");
-  const [score,setScore] = useState(0);
+export default function PracticeClient({ words }: { words: Word[] }) {
+  const { t } = useI18n();
+
+  const [index, setIndex] = useState(0);
+  const [reverse, setReverse] = useState(false);
+  const [answer, setAnswer] = useState("");
+  const [result, setResult] = useState<"idle" | "correct" | "wrong">("idle");
+  const [score, setScore] = useState(0);
+
   const word = words[index];
 
   const expected = reverse ? word.amharic : word.english;
   const prompt = reverse ? word.english : word.amharic;
 
-  useEffect(()=> {
-    const saved = Number(localStorage.getItem("ethubx-practice-score") || 0);
-    setScore(saved);
-  },[]);
+  useEffect(() => {
+    const saved = Number(
+      localStorage.getItem("ethubx-practice-score") || 0
+    );
 
-  function normalize(v:string) {
-    return v.trim().toLowerCase().replace(/\s+/g," ");
+    setScore(saved);
+  }, []);
+
+  function normalize(value: string) {
+    return value.trim().toLowerCase().replace(/\s+/g, " ");
   }
 
-  function check() {
+  function checkAnswer() {
     if (!answer.trim()) return;
-    const ok = normalize(answer) === normalize(expected);
-    setResult(ok ? "correct" : "wrong");
-    if (ok) {
-      const next = score + 1;
-      setScore(next);
-      localStorage.setItem("ethubx-practice-score", String(next));
-      localStorage.setItem("ethubx-last-practice", new Date().toISOString());
+
+    const correct = normalize(answer) === normalize(expected);
+
+    setResult(correct ? "correct" : "wrong");
+
+    if (correct) {
+      const nextScore = score + 1;
+
+      setScore(nextScore);
+
+      localStorage.setItem(
+        "ethubx-practice-score",
+        String(nextScore)
+      );
+
+      localStorage.setItem(
+        "ethubx-last-practice",
+        new Date().toISOString()
+      );
     }
   }
 
-  function next() {
-    setIndex((index+1)%words.length);
+  function nextWord() {
+    setIndex((current) => (current + 1) % words.length);
     setAnswer("");
     setResult("idle");
   }
 
-  const progress = useMemo(()=>Math.round(((index+1)/words.length)*100),[index,words.length]);
+  function switchDirection() {
+    setReverse((current) => !current);
+    setAnswer("");
+    setResult("idle");
+  }
+
+  const progress = useMemo(
+    () => Math.round(((index + 1) / words.length) * 100),
+    [index, words.length]
+  );
+
+  if (!word) {
+    return null;
+  }
 
   return (
-    <div className="card mt-8 p-5 sm:p-8">
-      <div className="flex items-center justify-between gap-3">
-        <span className="text-sm font-bold text-stone-500">Word {index+1} / {words.length}</span>
-        <span className="rounded-full bg-[#5b3df5]/10 px-3 py-1 text-sm font-black text-[#5b3df5]">Score {score}</span>
-      </div>
-      <div className="mt-3 h-2 overflow-hidden rounded-full bg-stone-100"><div className="h-full rounded-full bg-[#5b3df5] transition-all" style={{width:`${progress}%`}}/></div>
+    <section className="mt-10 border-y border-stone-200 py-7 sm:py-9">
+      {/* Progress */}
+      <div className="flex items-center justify-between gap-4">
+        <span className="text-sm font-bold text-stone-500">
+          {index + 1} / {words.length}
+        </span>
 
+        <span className="text-sm font-black text-purple-700">
+          {t.quiz.score}: {score}
+        </span>
+      </div>
+
+      <div className="mt-3 h-1.5 overflow-hidden bg-stone-100">
+        <div
+          className="h-full bg-purple-600 transition-all duration-300"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+
+      {/* Prompt */}
       <div className="mt-10 text-center">
-        <p className="text-sm font-black uppercase tracking-widest text-stone-400">{reverse?"Write the Amharic word":"Write it in English"}</p>
-        <div className={`${reverse?"text-5xl sm:text-7xl":"amharic text-7xl sm:text-9xl"} mt-6 font-black tracking-tight`}>{prompt}</div>
-        <p className="mt-4 text-stone-500">{word.hint}</p>
+        <p className="text-xs font-black uppercase tracking-[0.18em] text-stone-400">
+          {reverse
+            ? "Write the Amharic word"
+            : "Write it in English"}
+        </p>
+
+        <div
+          className={`mt-5 font-black tracking-tight text-stone-950 ${
+            reverse
+              ? "text-5xl sm:text-7xl"
+              : "amharic text-7xl sm:text-9xl"
+          }`}
+        >
+          {prompt}
+        </div>
+
+        {word.hint && (
+          <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-stone-500">
+            {word.hint}
+          </p>
+        )}
       </div>
 
+      {/* Answer */}
       <div className="mx-auto mt-8 max-w-xl">
-        <input autoFocus value={answer} onChange={e=>{setAnswer(e.target.value);setResult("idle")}} onKeyDown={e=>e.key==="Enter"&&check()} placeholder={reverse?"Type አማርኛ here...":"Type English here..."} className="w-full rounded-2xl border-2 border-stone-200 bg-white px-5 py-4 text-center text-xl font-bold outline-none transition focus:border-[#5b3df5]" />
-        {result!=="idle" && (
-          <div className={`mt-4 rounded-2xl p-4 text-center font-bold ${result==="correct"?"bg-green-50 text-green-700":"bg-red-50 text-red-700"}`}>
-            {result==="correct" ? <><Check className="mr-1 inline"/> Correct! 🎉</> : <><X className="mr-1 inline"/> Not quite. The answer is <strong>{expected}</strong>.</>}
+        <input
+          autoFocus
+          value={answer}
+          onChange={(event) => {
+            setAnswer(event.target.value);
+            setResult("idle");
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              checkAnswer();
+            }
+          }}
+          placeholder={
+            reverse
+              ? "Type አማርኛ here..."
+              : "Type English here..."
+          }
+          className="w-full border border-stone-300 bg-white px-4 py-4 text-center text-lg font-bold text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-purple-600 sm:text-xl"
+        />
+
+        {/* Result */}
+        {result !== "idle" && (
+          <div
+            className={`mt-4 border px-4 py-4 text-center text-sm font-bold ${
+              result === "correct"
+                ? "border-green-200 bg-green-50 text-green-700"
+                : "border-red-200 bg-red-50 text-red-700"
+            }`}
+          >
+            {result === "correct" ? (
+              <>
+                <Check className="mr-1 inline h-4 w-4" />
+                Correct!
+              </>
+            ) : (
+              <>
+                <X className="mr-1 inline h-4 w-4" />
+                Not quite. The answer is{" "}
+                <strong>{expected}</strong>.
+              </>
+            )}
           </div>
         )}
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          <button onClick={check} className="btn-primary">Check answer</button>
-          <button onClick={()=>setReverse(!reverse)} className="btn-secondary"><RotateCcw/> {reverse?"Amharic → English":"English → Amharic"}</button>
-          <button onClick={next} className="btn-secondary"><Shuffle/> Next word</button>
+
+        {/* Controls */}
+        <div className="mt-5 grid gap-2 sm:grid-cols-3">
+          <button
+            type="button"
+            onClick={checkAnswer}
+            className="btn-primary min-h-12"
+          >
+            {t.common.continue}
+          </button>
+
+          <button
+            type="button"
+            onClick={switchDirection}
+            className="btn-secondary min-h-12"
+          >
+            <RotateCcw className="h-4 w-4" />
+
+            {reverse
+              ? "Amharic → English"
+              : "English → Amharic"}
+          </button>
+
+          <button
+            type="button"
+            onClick={nextWord}
+            className="btn-secondary min-h-12"
+          >
+            <Shuffle className="h-4 w-4" />
+            {t.common.next}
+          </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
